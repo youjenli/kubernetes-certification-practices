@@ -4,17 +4,6 @@ include "root" {
   # Set expose to true, otherwise we could not reference the values in root hcl at inputs section of this hcl.
 }
 
-dependency "digitalocean_project" {
-  config_path = "../project"
-
-  # Configure mock outputs for the `validate` command that are returned when there are no outputs available 
-  # (e.g the module hasn't been applied yet.
-  mock_outputs_allowed_terraform_commands = ["validate"]
-  mock_outputs = {
-    project_id = "fake-project-id"
-  }
-}
-
 terraform {
   source = "../../../modules/kubernetes"
 }
@@ -27,6 +16,5 @@ locals {
 }
 
 inputs = {
-  project_id = dependency.digitalocean_project.outputs.project_id
   region = local.region
 }

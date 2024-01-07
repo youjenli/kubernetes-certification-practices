@@ -1,3 +1,10 @@
+resource "digitalocean_project" "playground" {
+  name        = "playground"
+  description = "A project that organizes resources established for DigitalOcean feature exploration."
+  purpose     = "Exploration"
+  environment = "Development"
+}
+
 resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
   name   = "kubernetes-cluster-demo"
   region = var.region
@@ -25,7 +32,7 @@ resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
 }
 
 resource "digitalocean_project_resources" "module_resources" {
-  project = var.project_id
+  project = digitalocean_project.playground.id
   resources = [
     digitalocean_kubernetes_cluster.k8s_cluster.urn
   ]
