@@ -28,4 +28,5 @@ locals {
 
 inputs = {
   project_id = dependency.digitalocean_project.outputs.project_id
+  region = local.region
 }
