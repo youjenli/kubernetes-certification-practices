@@ -18,7 +18,3 @@ provider "digitalocean" {
 }
 EOF
 }
-
-locals {
-  helloworld = "helloworld"
-}
