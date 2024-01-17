@@ -1,6 +1,6 @@
 param(
     [string] $cmd = "apply",
-    [bool] $ap = $False
+    [bool] $aa = $False
 )
 
 $do_token = Get-Content .\access-token.txt -Raw
@@ -16,13 +16,12 @@ IF ($cmd -eq "dt")
 }
 
 $auto_approve = ""
-if ( $ap -eq $True )
+if ( $aa -eq $True )
 {
     $auto_approve = "-auto-approve"
 }
 
-# Write $cmd
-# Write $auto_approve
+terragrunt init
 terragrunt $cmd -lock=false -var do_token=$do_token $auto_approve
 
 Pop-Location

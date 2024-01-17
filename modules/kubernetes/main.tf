@@ -1,9 +1,12 @@
+locals {
+  cluster_name = "kubernetes-cluster-playground"
+}
+
 resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
-  name   = "kubernetes-cluster-playground"
+  name   = local.cluster_name
   region = var.region
   # Grab the latest version slug from `doctl kubernetes options versions`
   version = "1.28.2-do.0"
-  vpc_uuid = digitalocean_vpc.k8s_vpc.id
   destroy_all_associated_resources = true
   registry_integration = true
 
@@ -22,4 +25,17 @@ resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
   depends_on = [
     digitalocean_container_registry.registry
   ]
+}
+
+data "digitalocean_kubernetes_cluster" "k8s_cluster" {
+  name = local.cluster_name
+  depends_on = [
+    digitalocean_kubernetes_cluster.k8s_cluster
+  ]
+}
+
+resource "local_file" "kubeconfig" {
+  depends_on = [data.digitalocean_kubernetes_cluster.k8s_cluster]
+  content    = data.digitalocean_kubernetes_cluster.k8s_cluster.kube_config[0].raw_config
+  filename   = "${var.kubeconfig_path}/.kubeconfig"
 }

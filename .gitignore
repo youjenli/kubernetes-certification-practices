@@ -54,3 +54,7 @@ $RECYCLE.BIN/
 *.lnk
 
 access-token.*
+
+.kubeconfig
+kubeconfig
+kubernetes.conf

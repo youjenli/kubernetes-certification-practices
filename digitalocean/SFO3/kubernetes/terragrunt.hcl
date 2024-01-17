@@ -17,4 +17,5 @@ locals {
 
 inputs = {
   region = local.region
+  kubeconfig_path = "${get_repo_root()}"
 }
