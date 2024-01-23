@@ -58,5 +58,3 @@ access-token.*
 .kubeconfig
 kubeconfig
 kubernetes.conf
-
-docker*.json
