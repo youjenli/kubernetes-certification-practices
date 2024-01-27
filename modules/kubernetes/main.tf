@@ -15,11 +15,6 @@ resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
     size       = "s-2vcpu-4gb-amd"
     node_count = 3
 
-    taint {
-      key    = "workloadKind"
-      value  = "database"
-      effect = "NoSchedule"
-    }
   }
 
   depends_on = [
