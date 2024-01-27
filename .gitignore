@@ -58,3 +58,5 @@ access-token.*
 .kubeconfig
 kubeconfig
 kubernetes.conf
+
+kubernetes.tfvars

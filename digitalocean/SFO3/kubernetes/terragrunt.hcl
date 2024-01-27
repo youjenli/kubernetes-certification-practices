@@ -17,7 +17,5 @@ locals {
 
 inputs = {
   region = local.region
-  k8s_cluster_name = "kubernetes-cluster-playground"
-  container_registry_name = "kubernetes-container-registry"
   config_path = "${get_repo_root()}"
 }
