@@ -8,9 +8,9 @@ if ( $aa -eq $True )
     $auto_approve = "-auto-approve"
 }
 
-$do_token = Get-Content .\access-token.txt -Raw
+$do_token = Get-Content $PSScriptRoot\access-token.txt -Raw
 
-Push-Location -Path .\digitalocean\SFO3\kubernetes\
+Push-Location -Path $PSScriptRoot\digitalocean\SFO3\kubernetes\
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$do_token $auto_approve
 docker logout registry.digitalocean.com
