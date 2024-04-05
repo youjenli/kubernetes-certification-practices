@@ -5,7 +5,7 @@ if [[ !"$#" -gt 0 ]]; then
 fi
 
 case $1 in
-    -aa|--auto-approve) 
+    -aa|--auto-approve)
       if [ $2 == "true" ]; then
         AUTO_APPROVE="--auto-approve"
       fi
