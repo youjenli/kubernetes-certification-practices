@@ -18,6 +18,8 @@ SCRIPT_PATH=`realpath $(dirname -- "${BASH_SOURCE[0]}")`
 DO_TOKEN="$(<"$SCRIPT_PATH/access-token.txt")"
 #https://stackoverflow.com/questions/7427262/how-to-read-a-file-into-a-variable-in-shell
 
+export REMOTE_BACKEND_BUCKET="$(<"$SCRIPT_PATH/remote_backend.txt")"
+
 if [ ! -f $SCRIPT_PATH/kubernetes.tfvars ]; then
   cp $SCRIPT_PATH/template.tfvars $SCRIPT_PATH/kubernetes.tfvars
 fi

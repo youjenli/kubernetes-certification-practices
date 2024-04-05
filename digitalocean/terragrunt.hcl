@@ -1,3 +1,8 @@
+locals {
+  remote_backend_bucket = get_env("REMOTE_BACKEND_BUCKET", "my-do-demo-terraform-backend")
+}
+
+
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
@@ -27,10 +32,10 @@ remote_state {
   backend = "s3"
   config = {
     encrypt = true
-    bucket =  "martin-do-demo-terraform-backend"
+    bucket =  local.remote_backend_bucket
     key = "${path_relative_to_include()}/terraform.tfstate"
     region = "ap-northeast-1"
-    dynamodb_table = "martin-do-demo-terraform-backend-lock"
+    dynamodb_table = "${local.remote_backend_bucket}-lock"
   }
   generate = {
     path = "backend.tf"

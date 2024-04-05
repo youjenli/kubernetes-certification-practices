@@ -55,6 +55,9 @@ $RECYCLE.BIN/
 
 access-token.*
 
+# Terraform remote backend settings
+remote_backend.*
+
 .kubeconfig
 kubeconfig
 kubernetes.conf
