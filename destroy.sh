@@ -18,6 +18,8 @@ echo "$SCRIPT_PATH"
 DO_TOKEN="$(<"$SCRIPT_PATH/access-token.txt")"
 #https://stackoverflow.com/questions/7427262/how-to-read-a-file-into-a-variable-in-shell
 
+export REMOTE_BACKEND_BUCKET="$(<"$SCRIPT_PATH/remote_backend.txt")"
+
 cd  $SCRIPT_PATH/digitalocean/SFO3/kubernetes/
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE -refresh=false

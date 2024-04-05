@@ -10,6 +10,8 @@ if ( $aa -eq $True )
 
 $do_token = Get-Content $PSScriptRoot\access-token.txt -Raw
 
+$Env:REMOTE_BACKEND_BUCKET = Get-Content $PSScriptRoot\remote_backend.txt -Raw
+
 Push-Location -Path $PSScriptRoot\digitalocean\SFO3\kubernetes\
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$do_token $auto_approve -refresh=false

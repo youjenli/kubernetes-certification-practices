@@ -10,6 +10,8 @@ if ( $aa -eq $True )
 
 $do_token = Get-Content $PSScriptRoot\access-token.txt -Raw
 
+$Env:REMOTE_BACKEND_BUCKET = Get-Content $PSScriptRoot\remote_backend.txt -Raw
+
 $tfvar_exists = Test-Path $PSScriptRoot\kubernetes.tfvars
 if ( $tfvar_exists -eq $False )
 {
