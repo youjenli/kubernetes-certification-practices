@@ -22,3 +22,18 @@ provider "digitalocean" {
 }
 EOF
 }
+
+remote_state {
+  backend = "s3"
+  config = {
+    encrypt = true
+    bucket =  "martin-do-demo-terraform-backend"
+    key = "${path_relative_to_include()}/terraform.tfstate"
+    region = "ap-northeast-1"
+    dynamodb_table = "martin-do-demo-terraform-backend-lock"
+  }
+  generate = {
+    path = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+}
