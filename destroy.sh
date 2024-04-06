@@ -20,7 +20,7 @@ DO_TOKEN="$(<"$SCRIPT_PATH/access-token.txt")"
 
 export REMOTE_BACKEND_BUCKET="$(<"$SCRIPT_PATH/remote_backend.txt")"
 
-cd  $SCRIPT_PATH/digitalocean/SFO3/kubernetes/
+cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE -refresh=false
 # Add -refresh=false to make kubernetes module access remote k8s resources instead of local resources.

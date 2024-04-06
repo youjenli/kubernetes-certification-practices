@@ -12,7 +12,7 @@ $do_token = Get-Content $PSScriptRoot\access-token.txt -Raw
 
 $Env:REMOTE_BACKEND_BUCKET = Get-Content $PSScriptRoot\remote_backend.txt -Raw
 
-Push-Location -Path $PSScriptRoot\digitalocean\SFO3\kubernetes\
+Push-Location -Path $PSScriptRoot\terragrunt\digitalocean\SFO3\kubernetes-certification\
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$do_token $auto_approve -refresh=false
 # Add -refresh=false to make kubernetes module access remote k8s resources instead of local resources.

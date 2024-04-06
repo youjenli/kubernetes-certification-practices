@@ -5,7 +5,7 @@ include "root" {
 }
 
 terraform {
-  source = "../../../modules/kubernetes"
+  source = "../../../../modules/kubernetes"
 }
 
 locals {
