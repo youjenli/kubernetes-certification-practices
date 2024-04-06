@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: current-chipmunk-deployment
+  namespace: goshawk
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: current-chipmunk-deployment
+      run: dep-svc #確保和current-chipmunk-deployment都有此標籤
+  template:
+    metadata:
+      labels:
+        app: current-chipmunk-deployment
+        run: dep-svc
+    spec:
+      containers:
+      - image: nginx:1.16
+        name: nginx

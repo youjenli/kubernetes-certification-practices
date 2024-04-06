@@ -1,0 +1,29 @@
+apiVersion: apps/v1 #修改
+kind: Deployment
+metadata:
+  name: www-deployment
+  namespace: garfish #namespace
+spec:
+  replicas: 1
+  selector:         #新增
+    matchLabels:    #新增
+      app: nginx    #新增
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - mountPath: /var/log/nginx
+            name: logs
+        env:
+          - name: NGINX_ENTRYPOINT_OUIET_LOGS
+            value: "1"
+      volumes:
+        - name: logs
+          emptyDir: {}

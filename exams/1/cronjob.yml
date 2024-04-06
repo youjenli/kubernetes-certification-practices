@@ -1,0 +1,22 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ppi
+spec:
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 4
+  startingDeadlineSeconds: 8
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: pi            # 名稱
+              image: perl:5       # 映像檔
+              imagePullPolicy: IfNotPresent
+              command: [ "perl", "-Mbignum=bpi", "-wle", "print bpi(2000)" ] #題目命令
+          restartPolicy: Never
+
+# https://stackoverflow.com/questions/60061241/commands-passed-to-a-kubernetes-job-and-pod
