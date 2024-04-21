@@ -2,12 +2,14 @@
 
 if [[ !"$#" -gt 0 ]]; then
   AUTO_APPROVE=""
+  NONE_INTERACTIVE=""
 fi
 
 case $1 in
     -aa|--auto-approve)
       if [ $2 == "true" ]; then
         AUTO_APPROVE="--auto-approve"
+        NONE_INTERACTIVE="--terragrunt-non-interactive"
       fi
 esac
 # echo $AUTO_APPROVE
@@ -20,10 +22,19 @@ DO_TOKEN="$(<"$SCRIPT_PATH/access-token.txt")"
 
 export REMOTE_BACKEND_BUCKET="$(<"$SCRIPT_PATH/remote_backend.txt")"
 
-cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/
+cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes
 terragrunt init
-terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE -refresh=false
+terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE -refresh=false 
 # Add -refresh=false to make kubernetes module access remote k8s resources instead of local resources.
 # https://github.com/hashicorp/terraform-provider-kubernetes/issues/1028
-docker logout registry.digitalocean.com
+cd -
+
+cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes-cluster
+terragrunt init
+terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE
+cd -
+
+cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/container-registry
+terragrunt init
+terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE
 cd -

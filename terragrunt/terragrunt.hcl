@@ -1,5 +1,5 @@
 locals {
-  remote_backend_bucket = get_env("REMOTE_BACKEND_BUCKET", "my-do-demo-terraform-backend")
+  remote_backend_bucket = get_env("REMOTE_BACKEND_BUCKET")
 }
 
 

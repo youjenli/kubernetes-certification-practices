@@ -1,21 +1,16 @@
-variable "region" {
+variable "kubeconfig_file_path" {
   type        = string
-  description = "DigitalOcean data center region."
-}
-
-variable "k8s_cluster_name" {
-  type        = string
-  description = "Kubernetes cluster name."
-  default = "kubernetes-cluster-playground"
+  description = "Kubernetes configuration file path."
 }
 
 variable "container_registry_name" {
   type        = string
-  description = "DigitalOcean container registry name."
+  description = "Default DigitalOcean container registry name."
   default = "kubernetes-container-registry"
 }
 
-variable "config_path" {
+variable "container_registry_credentials" {
   type        = string
-  description = "kubectl and docker client config file path."
+  description = "Default DigitalOcean container registry credentials."
+  sensitive   = true
 }

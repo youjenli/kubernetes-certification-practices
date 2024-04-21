@@ -1,36 +1,39 @@
-data "digitalocean_kubernetes_versions" "k8s_cluster" {
-  version_prefix = "1.28."
+locals {
+  registry_name_in_k8s_secret = "registry-${var.container_registry_name}"
 }
 
-resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
-  name   = var.k8s_cluster_name
-  region = var.region
-  # Grab the latest version slug from `doctl kubernetes options versions`
-  version = data.digitalocean_kubernetes_versions.k8s_cluster.latest_version
-  destroy_all_associated_resources = true
-  registry_integration = true
+provider "kubernetes" {
+  config_path = var.kubeconfig_file_path
+}
 
-  node_pool {
-    name       = "worker-pool"
-    size       = "s-2vcpu-4gb-amd"
-    node_count = 3
-
+# Save registry credentials to k8s secret
+resource "kubernetes_secret_v1" "default_image_pull_secret" {
+  metadata {
+    namespace = "kube-system"
+    name = local.registry_name_in_k8s_secret
+    annotations = {
+      "digitalocean.com/dosecret-identifier" = local.registry_name_in_k8s_secret
+    }
   }
 
-  depends_on = [
-    digitalocean_container_registry.registry
-  ]
+  data = {
+    ".dockerconfigjson" = var.container_registry_credentials
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
 }
 
-data "digitalocean_kubernetes_cluster" "k8s_cluster" {
-  name = var.k8s_cluster_name
-  depends_on = [
-    digitalocean_kubernetes_cluster.k8s_cluster
-  ]
-}
+# Set default service account image pull secret, so that we don't have to patch it later with CLI
+# kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-<your-registry-name>"}]}'
+# https://github.com/hashicorp/terraform-provider-kubernetes/issues/302
+resource "kubernetes_default_service_account_v1" "default" {
 
-resource "local_file" "kubeconfig" {
-  depends_on = [data.digitalocean_kubernetes_cluster.k8s_cluster]
-  content    = data.digitalocean_kubernetes_cluster.k8s_cluster.kube_config[0].raw_config
-  filename   = "${var.config_path}/.kubeconfig"
+  metadata {
+    namespace = "default"
+  }
+
+  image_pull_secret {
+    name = local.registry_name_in_k8s_secret
+  }
+
 }

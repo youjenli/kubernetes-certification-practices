@@ -2,12 +2,14 @@
 
 if [[ !"$#" -gt 0 ]]; then
   AUTO_APPROVE=""
+  NONE_INTERACTIVE=""
 fi
 
 case $1 in
     -aa|--auto-approve)
       if [ $2 == "true" ]; then
         AUTO_APPROVE="--auto-approve"
+        NONE_INTERACTIVE="--terragrunt-non-interactive"
       fi
 esac
 # echo $AUTO_APPROVE
@@ -25,8 +27,18 @@ if [ ! -f $TF_VARS_PATH ]; then
   cp $SCRIPT_PATH/template.tfvars $TF_VARS_PATH
 fi
 
-cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/
+cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/container-registry
 terragrunt init
-terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE -var-file $TF_VARS_PATH
+terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE -var-file $TF_VARS_PATH
 docker login -u $DO_TOKEN -p $DO_TOKEN registry.digitalocean.com
+cd -
+
+cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes-cluster
+terragrunt init
+terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE -var-file $TF_VARS_PATH
+cd -
+
+cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes
+terragrunt init
+terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE
 cd -
