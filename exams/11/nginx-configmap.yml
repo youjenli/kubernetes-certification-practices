@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-configmap
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:stable
+      ports:
+      - containerPort: 80
+      volumeMounts:
+        - name: config
+          mountPath: "/some/path"
+          readOnly: true
+
+  volumes:
+    - name: config
+      configMap:
+        name: some-config
+        items:
+          - key: "key3"
+            path: "key3"

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netshoot
+  labels:
+    app: netshoot
+spec:
+  containers:
+    - name: netshoot
+      image: nicolaka/netshoot
+      tty: true
+      stdin: true
+      volumeMounts:
+        - name: config
+          mountPath: "/some/path"
+          readOnly: true
+
+  volumes:
+    - name: config
+      configMap:
+        name: some-config
+        items:
+          - key: "key3"
+            path: "key3"
