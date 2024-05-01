@@ -37,4 +37,5 @@ cd -
 cd  $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/container-registry
 terragrunt init
 terragrunt destroy -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE
+docker logout registry.digitalocean.com
 cd -
