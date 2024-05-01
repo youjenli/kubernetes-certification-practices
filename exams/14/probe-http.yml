@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-http
+  labels:
+    app: echo-server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: echo-server
+  template:
+    metadata:
+      labels:
+        app: echo-server
+    spec:
+      containers:
+        - name: k8s-practice14
+          image: registry.digitalocean.com/k8s-image-registry/k8s_practice14
+          ports:
+          - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /healthz/return200
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
