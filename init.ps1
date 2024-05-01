@@ -5,9 +5,9 @@ $Env:do_token = Get-Content $PSScriptRoot\access-token.txt -Raw
 # Load REMOTE_BACKEND_BUCKET to environment variable, so that it could be retrieved and passed to Terraform.
 $Env:REMOTE_BACKEND_BUCKET = Get-Content $PSScriptRoot\remote_backend.txt -Raw
 
-$tf_vars_path = "$PSScriptRoot\kubernetes.tfvars"
-$tfvar_exists = Test-Path $tf_vars_path
+$Env:tf_vars_path = "$PSScriptRoot\kubernetes.tfvars"
+$tfvar_exists = Test-Path $Env:tf_vars_path
 if ( $tfvar_exists -eq $False )
 {
-    Copy-Item -Path $PSScriptRoot\template.tfvars -Destination $tf_vars_path
+    Copy-Item -Path $PSScriptRoot\template.tfvars -Destination $Env:tf_vars_path
 }
