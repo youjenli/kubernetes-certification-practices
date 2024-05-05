@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.16
+      ports:
+      - containerPort: 80
+
+    # Additional container to verify the connectivities.
+    - name: netshoot
+      image: nicolaka/netshoot
+      tty: true
+      stdin: true
