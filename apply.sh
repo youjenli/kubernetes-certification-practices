@@ -14,27 +14,22 @@ case $1 in
 esac
 # echo $AUTO_APPROVE
 
-source ./init.sh
+export APPLY_SCRIPT_PATH=`realpath $(dirname -- "${BASH_SOURCE[0]}")`
 
-cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/container-registry
+source $APPLY_SCRIPT_PATH/init.sh
+
+cd $INIT_SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/container-registry
 terragrunt init
 terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE -var-file $TF_VARS_PATH
 export REGISTRY_ENDPOINT=$(terragrunt output -raw registry_endpoint)
 cd -
 
-docker login -u $DO_TOKEN -p $DO_TOKEN registry.digitalocean.com
-alias dk="docker"
-
-cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes-cluster
+cd $INIT_SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes-cluster
 terragrunt init
 terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE -var-file $TF_VARS_PATH
 cd -
 
-# Alias
-current=$(pwd)
-alias kbl="kubectl --kubeconfig $current/.kubeconfig"
-
-cd $SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes
+cd $INIT_SCRIPT_PATH/terragrunt/digitalocean/SFO3/kubernetes-certification/kubernetes
 terragrunt init
 terragrunt apply -lock=false -var do_token=$DO_TOKEN $AUTO_APPROVE $NONE_INTERACTIVE
 cd -
