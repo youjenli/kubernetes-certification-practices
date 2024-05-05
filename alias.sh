@@ -8,3 +8,5 @@ docker login -u $DO_TOKEN -p $DO_TOKEN registry.digitalocean.com
 alias dk="docker"
 
 alias kbl="kubectl --kubeconfig $INIT_SCRIPT_PATH/.kubeconfig"
+
+alias hlm="helm --kubeconfig $INIT_SCRIPT_PATH/.kubeconfig"
