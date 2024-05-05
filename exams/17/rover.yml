@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rover
+  namespace: ckad00017
+spec:
+  # Select a deployment instead of a group of pods
+  selector:
+    app: webapp
+    tier: dmz
+  ports:
+    - name: http
+      protocol: TCP
+      port: 81
+      targetPort: 80
+  type: LoadBalancer

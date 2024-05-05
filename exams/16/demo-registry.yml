@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-registry
+  namespace: frontend
+type: kubernetes.io/dockercfg
+data:
+  .dockercfg: |
+# TODO
