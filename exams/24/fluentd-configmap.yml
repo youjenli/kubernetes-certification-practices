@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+data:
+  fluent.conf: |
+  @type tail
+  format none
+  path /ckad/log/input.log
+
+  tag cncf
+  @type none
+
+  @type file
+  path /ckad/log/output

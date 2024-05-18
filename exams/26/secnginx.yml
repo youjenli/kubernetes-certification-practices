@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secnginx
+spec:
+  containers:
+  - name: secnginx
+    image: nginx:1.26.0-alpine
+    ports:
+      - containerPort: 80
+    securityContext:
+      capabilities:
+        add: ["CAP_NET_ADMIN", "CAP_SYS_TIME"]

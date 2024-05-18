@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: logger-123
+        image: lfccncf/busybox:1
+        args: [/bin/sh, -c, 'while true;do echo "i luv cncf" >> /ckad/log/input.log; sleep10; done']
+        volumeMounts: 
+          - name: log
+            mountPath: /ckad/log
+      - name: adaptor-dev
+        image: lfccncf/fluentd:v0.12
+        # tty: true
+        # stdin: true
+        volumeMounts: 
+          - name: log
+            mountPath: /ckad/log
+          - name: fluentd-config
+            mountPath: /fluend/etc
+
+      volumes:
+        - name: log
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: fluentd-config
+          configMap:
+            name: fluentd-config

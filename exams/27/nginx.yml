@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: secret-volume
+            readOnly: true
+            mountPath: /etc/foo
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: mysecret

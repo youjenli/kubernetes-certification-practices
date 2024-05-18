@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-pod
+  labels: #新增
+    app: my-storage-app # 按題目要求新增
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: node02 #kubectl get nodes --show-labels獲取到的標籤，重要
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: task-pv-claim #pvc名
+  containers:
+    - name: task-pv-container
+      image: nginx
+      imagePullPolicy: IfNotPresent #使用已有鏡像,加快pod運行
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html" #掛載地址
+          name: task-pv-storage

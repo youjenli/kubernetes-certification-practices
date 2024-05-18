@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  haproxy.cfg: |-
+    ##based on Mesosphere Marathon's servicerouter.py haproxy config
+
+    global
+      daemon
+      log 127.0.0.1 local0
+      log 127.0.0.1 local1 notice
+      maxconn 4096
+      tune.ssl.default-dh-param 2048
+
+    defaults
+      log               global
+      retries           3
+      maxconn           2000
+      timeout connect   5s
+      timeout client    50s
+      timeout server    50s
+
+    listen stats
+      bind 127.0.0.1:9090
+      balance
+      mode http
+      stats enable
+      stats auth admin:admin
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2024-05-11T07:20:26Z"
+  name: haproxy-config
+  namespace: default
+  resourceVersion: "6274"
+  uid: 45e68a7c-a3c1-47df-8219-4b0962e1ddcc
