@@ -1,5 +1,5 @@
 locals {
-  remote_backend_bucket = get_env("REMOTE_BACKEND_BUCKET")
+  remote_backend_bucket = try(get_env("REMOTE_BACKEND_BUCKET"))
 }
 
 remote_state {
