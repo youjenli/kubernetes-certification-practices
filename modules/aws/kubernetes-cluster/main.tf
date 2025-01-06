@@ -85,11 +85,11 @@ module "eks" {
     # IMPORTANT: The launch template configuration unfortunately cannot include a reference to RequestSpotInstances
     # https://github.com/hashicorp/terraform-provider-aws/issues/15118
 
-    min_size     = 2
-    max_size     = 3
+    min_size     = 1
+    max_size     = 2
     # This value is ignored after the initial creation
     # https://github.com/bryantbiggs/eks-desired-size-hack
-    desired_size = 2
+    desired_size = 1
   }
 
   eks_managed_node_groups = {
