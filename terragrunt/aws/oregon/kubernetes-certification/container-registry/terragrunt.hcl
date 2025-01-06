@@ -6,7 +6,7 @@ locals {
 }
 
 terraform {
-  source = "../../../../../modules/aws/kubernetes-cluster"
+  source = "../../../../../modules/aws/container-registry"
 }
 
 include "root" {
@@ -19,12 +19,6 @@ include "csp" {
   path = find_in_parent_folders("csp.hcl")
 }
 
-dependency "container_registry" {
-  config_path = "../container-registry"
-}
-
 inputs = {
   region = local.region
-  k8s_cluster_name = "kubernetes-cluster-playground"
-  config_path = "${get_repo_root()}"
 }

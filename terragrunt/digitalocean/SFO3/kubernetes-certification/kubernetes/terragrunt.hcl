@@ -6,7 +6,7 @@ locals {
 }
 
 terraform {
-  source = "../../../../../modules/kubernetes"
+  source = "../../../../../modules/digitalocean/kubernetes"
 }
 
 include "root" {
