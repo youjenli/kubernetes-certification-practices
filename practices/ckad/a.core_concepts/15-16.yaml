@@ -1,0 +1,6 @@
+# 15
+#  k run busybox --image=busybox -it --restart=Never -- echo "hello world"
+# 註：若沒加 -it 的話，本地的命令列會看不到上面指令輸出的內容
+
+# 16
+# k run busybox --image=busybox -it --restart=Never --rm -- echo "hello world"

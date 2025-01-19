@@ -1,0 +1,15 @@
+# 8
+# k run nginx --image=nginx --port=80 --restart=Never
+# Default restart policy: always
+
+# 9
+# k edit nginx
+# 或 k set image pod/nginx nginx=nginx:1.24
+# k describe po nginx
+# k get po nginx -w
+
+# 10
+# k get po -o wide # 包含 ip 的 pod 資訊
+# 或者  k describe po nginx 也可以查到 ip
+
+# k run busybox --image=busybox --rm -it --restart=Never -- wget 10.244.0.8:80

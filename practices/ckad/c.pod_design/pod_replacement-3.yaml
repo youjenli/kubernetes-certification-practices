@@ -1,0 +1,20 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
+# Create a pod that will be placed on node controlplane. Use nodeSelector and tolerations.
+
+# k taint node minikube type=controlplane:NoSchedule
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+  containers:
+  - name: with-node-affinity
+    image: registry.k8s.io/pause:3.8
+  nodeSelector: #IMPORTANT
+    kubernetes.io/hostname: minikube #IMPORTANT # 考題用的是 controlplane，但 minikube 是本地測試系統所給的名稱
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane" #IMPORTANT
+      operator: "Exists" #IMPORTANT
+      effect: "NoSchedule"

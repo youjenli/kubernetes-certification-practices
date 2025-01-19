@@ -1,0 +1,33 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a configMap called 'options' with the value var5=val5. Create a new nginx pod that loads the value from variable 'var5' in an env variable called 'option'
+# k create cm options --from-literal=var5=val5 -o yaml
+# k run options --image=nginx -o yaml --dry-run=client -o yaml > po.yaml
+# 調整 yaml 檔內容，變成下面的樣子
+# k apply -f .\d.configuration\configmaps-2.yaml
+# k exec options -c=options -it -- env
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: options
+  name: options
+spec:
+  containers:
+  - image: nginx
+    name: options
+    resources: {}
+    env:
+      - name: var5
+        valueFrom:
+          configMapKeyRef:
+            name: options
+            key: var5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+# Create a configMap 'anotherone' with values 'var6=val6', 'var7=val7'. Load this configMap as env variables into a new nginx pod
+
+# Create a configMap 'cmvolume' with values 'var8=val8', 'var9=val9'. Load this as a volume inside an nginx pod on path '/etc/lala'. Create the pod and 'ls' into the '/etc/lala' directory.

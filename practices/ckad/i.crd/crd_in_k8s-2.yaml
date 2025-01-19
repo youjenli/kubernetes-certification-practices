@@ -1,0 +1,20 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/i.crd.md
+
+# Create custom object from the CRD
+# Name : operator-sample
+# Kind: Operator
+# Spec:
+# email: operator-sample@stable.example.com
+# name: operator sample
+# age: 30
+
+apiVersion: stable.example.com/v1
+kind: Operator
+metadata:
+  name: operator-sample
+spec:
+  email: operator-sample@stable.example.com
+  name: "operator sample"
+  age: 30
+
+# Listing operator

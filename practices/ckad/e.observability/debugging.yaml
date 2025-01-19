@@ -1,0 +1,17 @@
+# Create a busybox pod that runs 'ls /notexist'. Determine if there's an error (of course there is), see it. In the end, delete the pod
+# k run busybox --image=busybox --restart=Never -- /bin/sh -c "ls /notexist"
+# k logs busybox
+# k delete po busybox
+
+# Create a busybox pod that runs 'notexist'. Determine if there's an error (of course there is), see it. In the end, delete the pod forcefully with a 0 grace period
+# k run busybox --image=busybox --restart=Never -- /bin/sh -c "notexist"
+# k delete po busybox
+
+# Get CPU/memory utilization for nodes (metrics-server must be running)
+# docker context use default
+# 要啟動 docker context 否則 minikube 會噴 Unable to resolve the current Docker CLI context "default": context "default": context not found:
+# minikube addons enable metrics-server
+# https://onlyutkarsh.medium.com/how-to-enable-metrics-server-in-minikube-2e493517d1dc
+# https://bobcares.com/blog/minikube-error-metrics-api-not-available/
+# https://stackoverflow.com/q/77208746/3754778
+# k top nodes

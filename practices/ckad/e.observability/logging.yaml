@@ -1,0 +1,25 @@
+# Create a busybox pod that runs i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done. Check its logs
+# k run busybox --image=busybox --restart=Never --dry-run=client -o yaml > po.yaml
+# 編輯 po.yaml
+# k apply -f .\e.observability\logging.yaml
+# k logs busybox
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox
+  name: busybox
+spec:
+  containers:
+  - image: busybox
+    name: busybox
+    resources: {}
+    args:
+      - /bin/sh
+      - "-c"
+      - 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done'
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

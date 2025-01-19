@@ -1,0 +1,36 @@
+# Creating a basic Helm chart
+# helm create chart-test
+
+# Running a Helm chart
+# helm install helm-demo .\chart-test
+# minikube service helm-demo-chart-test --url # 若使用 minikube 部署 k8s 則要查本地位置
+
+# Find pending Helm deployments on all namespaces
+# helm list --pending -A
+
+# Uninstall a Helm release
+# helm uninstall helm-demo
+
+# Upgrading a Helm chart
+# helm upgrade helm-demo .\chart-test
+
+# Using Helm repo
+# helm repo add bitnami https://charts.bitnami.com/bitnami
+
+# Download a Helm chart from a repository
+# helm repo update
+# helm search repo bitnami # 可以再加 -l 列出各套件及各版本
+# helm pull bitnami/nginx # IMPORTANT 下載 chart 的指令不是 helm get all ...
+
+# Add the Bitnami repo at https://charts.bitnami.com/bitnami to Helm
+# helm repo add bitnami https://charts.bitnami.com/bitnami
+
+# Write the contents of the values.yaml file of the bitnami/node chart to standard output
+# helm show values bitnami/nginx | Select-String "replica" # 待複習的指令
+
+# Install the bitnami/node chart setting the number of replicas to 5
+# helm install nginx bitnami/nginx --set replicaCount=5 --set maxReplicas=5
+# minikube service nginx --url # 取得服務存取點
+# helm list
+# helm status nginx
+# helm uninstall nginx

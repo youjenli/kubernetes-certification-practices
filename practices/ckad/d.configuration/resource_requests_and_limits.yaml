@@ -1,0 +1,2 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create an nginx pod with requests cpu=100m,memory=256Mi and limits cpu=200m,memory=512Mi

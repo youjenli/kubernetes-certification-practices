@@ -1,0 +1,84 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/j.podman.md
+
+# Create a Dockerfile to deploy an Apache HTTP Server which hosts a custom main page
+# 建立一個 Containerfile
+# podman build -t httpd .
+
+# Build and see how many layers the image consists of
+# podman image inspect httpd
+
+# Run the image locally, inspect its status and logs, finally test that it responds as expected
+# podman run -p 8080:80 --name httpd-demo --rm httpd
+# 注意，所有參數都要擺在 httpd 前面
+
+# Run a command inside the pod to print out the index.html file
+# podman run -it --name httpd-demo --rm httpd /bin/sh
+# 注意，所有參數都要擺在 httpd 前面
+
+# Tag the image with ip and port of a private local registry and then push the image to this registry
+# 參考以下教學將本地 5000 埠的容器映像檔儲存庫設定為 podman 可接受的不安全容器映像檔儲存庫
+# https://podman-desktop.io/docs/containers/registries
+# 在 windows 大致包含下列步驟：
+# podman machine ssh # 登入 podman machine
+# 調整 registries.conf 檔案
+
+# podman container run -dt -p 5000:5000 --name registry public.ecr.aws/docker/library/registry:2.8.3
+# podman tag httpd localhost:5000/httpd
+# podman push localhost:5000/httpd
+
+# Verify that the registry contains the pushed image and that you can pull it
+# curl http://localhost:5000/v2/_catalog # 考題解答
+# 這題沒辦法先砍掉映像檔再拉下來，podman 會拒絕請求，理由是 podman 和 docker 會共用此本地映像檔儲存庫
+# Content           : {"repositories":["httpd"]}
+
+# 若改登入遠端私有註冊表並推送映像檔
+# podman machine init
+# 取得 AWS STS Tokens
+# aws ecr get-login-password --region us-west-2 | podman login -u AWS --password-stdin 309434882382.dkr.ecr.us-west-2.amazonaws.com
+# podman tag localhost/httpd 309434882382.dkr.ecr.us-west-2.amazonaws.com/education-repo:httpd
+# podman push 309434882382.dkr.ecr.us-west-2.amazonaws.com/education-repo:httpd
+# https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html
+
+# Create a container without running/starting it
+# podman create busybox
+
+# Export a container to output.tar file
+# podman container ls -a # 要加 -a 才叫得出未執行的容器查 id
+# podman export thirsty_hermann --output=output.tar
+
+# Run a pod with the image pushed to the registry
+# podman run -dt -p 8080:80 localhost/httpd
+# podman run -dt -p 8080:80 309434882382.dkr.ecr.us-west-2.amazonaws.com/education-repo:httpd
+
+# Log into a remote registry server and then read the credentials from the default file
+# podman machine init
+# 取得 AWS STS Tokens
+# aws ecr get-login-password --region us-west-2 | podman login -u AWS --password-stdin 309434882382.dkr.ecr.us-west-2.amazonaws.com
+# Get-Content $HOME/.config/containers/auth.json # Windows and mac
+# echo ${XDG_RUNTIME_DIR}/containers/auth.json # UNIX-like
+# https://docs.podman.io/en/v5.1.0/markdown/podman-login.1.html
+
+# Create a secret both from existing login credentials and from the CLI
+# k create secret generic mysecret --from-file=.dockerconfigjson=$HOME/.config/containers/auth.json --type=kubernetes.io/dockeconfigjson
+# $DOCKER_PW=$(python -c "from pathlib import Path; import json; print(json.load(open(Path.home() / '.config' / 'containers' / 'auth.json', 'r'))['auths']['309434882382.dkr.ecr.us-west-2.amazonaws.com']['auth'])")
+# k create secret docker-registry reg --docker-server=309434882382.dkr.ecr.us-west-2.amazonaws.com/education-repo --docker-username=AWS --docker-password=$DOCKER_PW
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+# docker-server 路徑不能寫錯
+
+# Create the manifest for a Pod that uses one of the two secrets just created to pull an image hosted on the relative private remote registry
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpd
+spec:
+  containers:
+  - name: private-reg-container
+    image: httpd # 不用寫 host 和 repo 的名稱
+  imagePullSecrets:
+  - name: reg
+
+# Clean up all the images and containers
+# k delete pod/httpd secret/reg
+# podman rm --all --force
+# podman rmi --all

@@ -1,0 +1,29 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/g.state.md
+# Create a PersistentVolumeClaim for this PersistentVolume, called 'mypvc', a request of 4Gi and an accessMode of ReadWriteOnce,
+# with the storageClassName of normal, and save it on pvc.yaml. Create it on the cluster.
+# Show the PersistentVolumeClaims of the cluster. Show the PersistentVolumes of the cluster
+# 參照不是很容易找 https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mypvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 4Gi
+  storageClassName: normal # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: myvolume
+  
+# Create a busybox pod with command 'sleep 3600', save it on pod.yaml.
+# Mount the PersistentVolumeClaim to '/etc/foo'.
+# Connect to the 'busybox' pod, and copy the '/etc/passwd' file to '/etc/foo/passwd'
+
+# Create a second pod which is identical with the one you just created (you can easily do it by changing the 'name' property on pod.yaml).
+# Connect to it and verify that '/etc/foo' contains the 'passwd' file. Delete pods to cleanup.
+# Note: If you can't see the file from the second pod, can you figure out why? What would you do to fix that?
+
+# Create a busybox pod with 'sleep 3600' as arguments. Copy '/etc/passwd' from the pod to your local folder

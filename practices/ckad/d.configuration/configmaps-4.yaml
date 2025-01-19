@@ -1,0 +1,34 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a configMap 'cmvolume' with values 'var8=val8', 'var9=val9'. Load this as a volume inside an nginx pod on path '/etc/lala'. Create the pod and 'ls' into the '/etc/lala' directory.
+# k create cm cmvolume --from-literal=var8=val8 --from-literal=var9=val9 -o yaml
+# k run cmvolume --image=nginx --restart=Never --dry-run=client -o yaml -- /bin/sh -c "ls /etc/lala" > po.yaml
+# 接著編譯文件內容
+# k apply -f .\d.configuration\configmaps-4.yaml
+# k logs cmvolume
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: cmvolume
+  name: cmvolume
+spec:
+  containers:
+  - args:
+    - /bin/sh
+    - -c
+    - ls /etc/lala
+    image: nginx
+    name: cmvolume
+    resources: {}
+    volumeMounts: # 本題重點
+      - name: cmvolume
+        mountPath: /etc/lala
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  volumes: # 本題重點
+    - name: cmvolume
+      configMap:
+        name: cmvolume
+status: {}

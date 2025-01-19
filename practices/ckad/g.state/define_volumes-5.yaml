@@ -1,0 +1,34 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/g.state.md
+# Create a second pod which is identical with the one you just created (you can easily do it by changing the 'name' property on pod.yaml).
+# Connect to it and verify that '/etc/foo' contains the 'passwd' file. Delete pods to cleanup.
+# Note: If you can't see the file from the second pod, can you figure out why? What would you do to fix that?
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox2
+  name: busybox2
+spec:
+  containers:
+  - args:
+    - /bin/sh
+    - -c
+    - sleep 3600
+    image: busybox
+    name: busybox2
+    resources: {}
+    volumeMounts:
+      - name: mypvc
+        mountPath: /etc/foo
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  volumes:
+    - name: mypvc
+      persistentVolumeClaim:
+        claimName: mypvc
+     
+status: {}
+
+# Create a busybox pod with 'sleep 3600' as arguments. Copy '/etc/passwd' from the pod to your local folder

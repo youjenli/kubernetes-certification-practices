@@ -1,0 +1,21 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
+# Implement canary deployment by running two instances of nginx marked as version=v1 and version=v2 so that the load is balanced at 75%-25% ratio
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-svc
+  labels:
+    app: my-app
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: my-app
+
+# 文件教的指令
+# k run -it --rm --restart=Never busybox --image=busybox -- "wget -qO- my-app-svc"
+# 結果發現這招沒用

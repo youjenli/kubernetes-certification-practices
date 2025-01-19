@@ -1,0 +1,6 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a namespace named limitrange with a LimitRange that limits pod memory to a max of 500Mi and min of 100Mi
+
+# Describe the namespace limitrange
+
+# Create an nginx pod that requests 250Mi of memory in the limitrange namespace

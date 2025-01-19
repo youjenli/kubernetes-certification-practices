@@ -1,0 +1,25 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a configMap 'anotherone' with values 'var6=val6', 'var7=val7'. Load this configMap as env variables into a new nginx pod
+# k create cm anotherone --from-literal=var6=val6 --from-literal=var7=val7 -o yaml
+# k run anotherone --image=nginx -o yaml --dry-run=client > po.yaml
+# 調整 yaml 成下面的樣子
+# k apply -f .\d.configuration\configmaps-3.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: anotherone
+  name: anotherone
+spec:
+  containers:
+  - image: nginx
+    name: anotherone
+    resources: {}
+    envFrom: # 重要語法
+      - configMapRef:
+          name: anotherone
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,39 @@
+# k run nginx --image=nginx --port=80 --dry-run=client -o yaml > 2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  initContainers:
+  - name: init
+    image: busybox
+    args:
+      - /bin/sh
+      - '-c'
+      - echo "Test" > "/work-dir/index.html"
+    volumeMounts:
+      - name: default
+        mountPath: /work-dir
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+      - name: default
+        mountPath: /usr/share/nginx/html
+    resources: {}
+  restartPolicy: Never
+  volumes:
+   - name: default
+     emptyDir: {}
+status: {}
+
+# k get po nginx -o wide
+# -o wide 是常用參數，要記住
+# k run client --image=busybox --restart=Never -it --rm -- /bin/sh -c "wget -O- 10.244.0.27"
+# 「wget -O-」格式是正確的

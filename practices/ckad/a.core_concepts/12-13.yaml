@@ -1,0 +1,5 @@
+# k logs nginx
+
+# Get logs about the previous instance
+# k logs nginx -p
+# k logs nginx --previous

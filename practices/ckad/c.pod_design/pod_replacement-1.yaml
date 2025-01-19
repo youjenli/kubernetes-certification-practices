@@ -1,0 +1,33 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
+# Create a pod that will be deployed to a Node that has the label 'accelerator=nvidia-tesla-p100'
+# k run aff --image=nginx --restart=Never # IMPORTANT
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: accelerator
+            operator: In
+            values:
+            - nvidia-tesla-p100
+      # preferredDuringSchedulingIgnoredDuringExecution:
+      # - weight: 1
+      #   preference:
+      #     matchExpressions:
+      #     - key: another-node-label-key
+      #       operator: In
+      #       values:
+      #       - another-node-label-value
+  containers:
+  - name: with-node-affinity
+    image: registry.k8s.io/pause:3.8
+
+# Taint a node with key tier and value frontend with the effect NoSchedule. Then, create a pod that tolerates this taint.
+
+# Create a pod that will be placed on node controlplane. Use nodeSelector and tolerations.
