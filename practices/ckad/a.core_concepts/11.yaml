@@ -1,3 +1,6 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# Get pod's YAML
+
 # k get po nginx -o yaml >> 11.yaml
 # k describe po nginx
 

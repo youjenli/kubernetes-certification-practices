@@ -1,16 +1,11 @@
-# k get ns myns
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# Get the YAML for a new namespace called 'myns' without creating it
+# k create ns myns --dry-run=client -o yaml > ns.yaml
 
 apiVersion: v1
 kind: Namespace
 metadata:
-  creationTimestamp: "2025-01-14T08:51:49Z"
-  labels:
-    kubernetes.io/metadata.name: mynamespace
-  name: mynamespace
-  resourceVersion: "1466"
-  uid: 0b7927b5-3ad8-47fa-b19e-b5e4a8f0f706
-spec:
-  finalizers:
-  - kubernetes
-status:
-  phase: Active
+  creationTimestamp: null
+  name: myns
+spec: {}
+status: {}

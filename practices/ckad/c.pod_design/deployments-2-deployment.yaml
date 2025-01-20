@@ -1,42 +1,28 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
 # Implement canary deployment by running two instances of nginx marked as version=v1 and version=v2 so that the load is balanced at 75%-25% ratio
+# k create deploy nginx --image=nginx --replicas=3 --dry-run=client -o yaml > deploy.yaml
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app-v2
+  creationTimestamp: null
   labels:
-    app: my-app
+    app: nginx
+  name: nginx1
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: my-app
-      version: v2
+      app: nginx
+  strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        app: my-app
-        version: v2
+        app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: workdir
-          mountPath: /usr/share/nginx/html
-      initContainers:
-      - name: install
-        image: busybox:1.28
-        command:
-        - /bin/sh
-        - -c
-        - "echo version-1 > /work-dir/index.html"
-        volumeMounts:
-        - name: workdir
-          mountPath: "/work-dir"
-      volumes:
-      - name: workdir
-        emptyDir: {}
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}

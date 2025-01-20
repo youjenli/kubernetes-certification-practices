@@ -1,30 +1,24 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
 # Create the same job, make it run 5 times, one after the other. Verify its status and delete it
-# k create job pi --image=perl --dry-run=client -- perl "-Mbignum=bpi" "-wle 'print bpi(2000)'" > jobs.yaml
-# 然後把 jobs.yaml 改成下面的樣子，再套用至 k8s
-# k get job pi
 # k delete job pi
 
 apiVersion: batch/v1
 kind: Job
 metadata:
   creationTimestamp: null
-  name: pi
+  name: busybox
 spec:
-  completions: 5 # 此題的重點
+  completions: 5
+  parallelism: 1
   template:
     metadata:
       creationTimestamp: null
     spec:
       containers:
-      - command:
-        - perl
-        - "-Mbignum=bpi"
-        - "-wle 'print bpi(2000)'"
-        image: perl
-        name: pi
+      - image: busybox
+        name: busybox
         resources: {}
       restartPolicy: Never
 status: {}
 
-# Create the same job, but make it run 5 parallel times
+# k get job busybox

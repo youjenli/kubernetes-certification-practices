@@ -9,6 +9,7 @@
 
 # Change the labels of pod 'nginx2' to be app=v2
 # k label po nginx2 app=v2 --overwrite
+# --overwrite 必填，否則不會取代 app 標籤原本的值
 
 # Get the label 'app' for the pods (show a column with APP labels)
 # k get po -l app --show-labels
@@ -17,32 +18,21 @@
 # k get po -l app=v2 --show-labels
 
 # Add a new label tier=web to all pods having 'app=v2' or 'app=v1' labels
-# k label po -l "app in(v1,v2)" tier=web # IMPORTANT
+# k label po -l "app in(v1,v2)" tier=web
 
 # Add an annotation 'owner: marketing' to all pods having 'app=v2' label
 # k annotate po -l "app in(v2)" owner=marketing
-
-apiVersion: v1
-kind: Pod
-metadata:
-  name: annotations-demo
-  annotations:
-    imageregistry: "https://hub.docker.com/"
-spec:
-  containers:
-  - name: nginx
-    image: nginx:1.14.2
-    ports:
-    - containerPort: 80
+# 或是 k annotate po -l app=v2 owner=marketing
 
 # Remove the 'app' label from the pods we created before
-# k label po nginx1 nginx2 nginx3 app- # IMPORTANT
+# k label po nginx1 nginx2 nginx3 app-
 
 # Annotate pods nginx1, nginx2, nginx3 with "description='my description'" value
-# k annotate po nginx1 nginx2 nginx3 "description=my description" 
+# k annotate po nginx1 nginx2 nginx3 description='my description'
+# k describe po nginx1 | grep Annotation
 
 # Check the annotations for pod nginx1
-# k describe po nginx1 | grep -i "annotations" # For Unix-like
+# k describe po nginx1 | grep -i "annotation" # For Unix-like
 # k describe po nginx1 | Select-String "annotations" # For Windows
 
 # Remove the annotations for these three pods

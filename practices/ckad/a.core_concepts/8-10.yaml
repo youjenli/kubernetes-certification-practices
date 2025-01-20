@@ -1,15 +1,18 @@
-# 8
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+
+# Create a pod with image nginx called nginx and expose traffic on port 80
 # k run nginx --image=nginx --port=80 --restart=Never
 # Default restart policy: always
 
-# 9
+# Change pod's image to nginx:1.24.0.
+# Observe that the container will be restarted as soon as the image gets pulled
 # k edit nginx
 # 或 k set image pod/nginx nginx=nginx:1.24
 # k describe po nginx
 # k get po nginx -w
 
-# 10
+# Get nginx pod's ip created in previous step, use a temp busybox image to wget its '/'
 # k get po -o wide # 包含 ip 的 pod 資訊
 # 或者  k describe po nginx 也可以查到 ip
-
-# k run busybox --image=busybox --rm -it --restart=Never -- wget 10.244.0.8:80
+# k run busybox --image=busybox --restart=Never -it --rm -- /bin/sh -c "wget -O- 10.244.1.6:80"
+# 要加 --restart=Never 否則容器會失敗，上面的指令跑了將久久無法結束。

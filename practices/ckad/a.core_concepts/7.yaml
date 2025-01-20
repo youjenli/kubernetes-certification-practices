@@ -1,2 +1,5 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md'
+# Get pods on all namespaces
+
 # k get po -A
 # k get po --all-namespaces

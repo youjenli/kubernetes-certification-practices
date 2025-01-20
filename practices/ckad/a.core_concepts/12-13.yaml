@@ -1,5 +1,6 @@
-# k logs nginx
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# Get information about the pod, including details about potential issues (e.g. pod hasn't started)
+# k describe po nginx
 
-# Get logs about the previous instance
-# k logs nginx -p
-# k logs nginx --previous
+# Get pod logs
+# k logs nginx

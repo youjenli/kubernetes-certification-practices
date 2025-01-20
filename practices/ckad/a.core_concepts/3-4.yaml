@@ -1,17 +1,24 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# Create a busybox pod (using kubectl command) that runs the command "env". Run it and see the output
+# k run busybox --image=busybox --restart=Never -it -- env
+
 apiVersion: v1
 kind: Pod
 metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox
   name: busybox
 spec:
   containers:
-  - name: busybox
+  - args:
+    - env
     image: busybox
-    ports:
-    - containerPort: 80
-    command: [ "env" ]
+    name: busybox
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
 
-# 或是
-# kbl run nginx -n mynamespace --image=nginx --restart=Never
-
-# k run busybox --image=busybox --restart=Never -- env
-# 也可以加上 -it 和 --rm 選項
+# Create a busybox pod (using YAML) that runs the command "env". Run it and see the output
+# k apply -f ./practices/ckad/a.core_concepts/3-4.yaml

@@ -1,11 +1,12 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
 # Create a job but ensure that it will be automatically terminated by kubernetes if it takes more than 30 seconds to execute
+# k create job busybox --image busybox --dry-run=client -o yaml > job.yaml
 
 apiVersion: batch/v1
 kind: Job
 metadata:
   creationTimestamp: null
-  name: pi
+  name: busybox
 spec:
   activeDeadlineSeconds: 30
   template:
@@ -16,12 +17,5 @@ spec:
       - image: busybox
         name: busybox
         resources: {}
-        args:
-        - /bin/sh -c "echo hello;sleep 35;echo world;"
-        - "-wle 'print bpi(2000)'"
       restartPolicy: Never
 status: {}
-
-# Create the same job, make it run 5 times, one after the other. Verify its status and delete it
-
-# Create the same job, but make it run 5 parallel times

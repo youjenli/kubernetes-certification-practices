@@ -1,82 +1,60 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
-# Create a deployment with image nginx:1.18.0, called nginx, having 2 replicas, defining port 80 as the port that this container exposes (don't create a service for this deployment)
-# k create deploy nginx --image=nginx --dry-run=client -o yaml > deploy.yaml
-# vim deploy.yaml，然後把 replicas 調成 2
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  creationTimestamp: null
-  labels:
-    app: nginx
-    version: v1
-  name: nginx
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx
-  strategy: {}
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - image: nginx:1.19.8
-        name: nginx
-        resources: {}
-status: {}
+# Create a deployment with image nginx:1.18.0, called nginx, having 2 replicas,
+# defining port 80 as the port that this container exposes (don't create a service for this deployment)
+# k create deploy nginx --image=nginx:1.18.0 --replicas=2 --port=80
 
 # View the YAML of this deployment
 # k get deploy nginx -o yaml
 
 # View the YAML of the replica set that was created by this deployment
-# k get rs -l app=nginx 查 rs
-# k get rs nginx-676b6c5bbc -o yaml
+# k get rs -l app=nginx -o yaml # 查 rs
 
 # Get the YAML for one of the pods
-# k describe rs nginx-676b6c5bbc 查 pod
-# k get po nginx-676b6c5bbc-7hg72 -o yaml
+# k get po -l app=nginx
+# k get po nginx-5bfb4b8bd8-wghvj -o yaml
 
 # Check how the deployment rollout is going
 # k rollout status deploy nginx
 
 # Update the nginx image to nginx:1.19.8
-# 改 yaml 檔
-# k set image deploy nginx nginx=nginx:1.19.8 # IMPORTANT 可以學的方便用法
+# 改 yaml 檔，或是:
+# k set image deploy nginx nginx=nginx:1.19.8
+# 映像檔的前面要以 nginx 開頭
 
 # Check the rollout history and confirm that the replicas are OK
 # k rollout history deploy nginx
-# 另外也要確認 deploy rs 和 po
+# 另外也要確認 deploy rs 和 po 才能確保狀態是正確的。
+# k get po -l app=nginx
+# k get rs -l app=nginx
 
 # Undo the latest rollout and verify that new pods have the old image (nginx:1.18.0)
 # k rollout undo deploy nginx
-# k get po
-# k describe po nginx-676b6c5bbc-fbv2f | Select-String "image"
+# k get po -l app=nginx | grep -i "image" # For Unix-like
+# k describe po nginx-676b6c5bbc-fbv2f | Select-String "image" # For Windows
 
 # Do an on-purpose update of the deployment with a wrong image nginx:1.91
 # kubectl set image deploy nginx nginx=nginx:1.91
 
 # Verify that something's wrong with the rollout
 # kubectl rollout status deploy nginx
-# kubectl get po # you'll see 'ErrImagePull' or 'ImagePullBackOff'
+# k get po -l app=nginx | grep -i image # you'll see 'ErrImagePull' or 'ImagePullBackOff'
 
 # Return the deployment to the second revision (number 2) and verify the image is nginx:1.19.8
+# k rollout history deploy nginx # 確認版本列表
 # k rollout undo deploy nginx --to-revision=2
-# k describe deploy nginx | Select-String "Image:"
+# k get deploy nginx
+# k describe deploy nginx | grep -i "image" # Unix-like
+# k describe deploy nginx | Select-String "Image:" # Windows
 # k rollout status deploy nginx
 
 # Check the details of the fourth revision (number 4)
-# k rollout hsitory deploy nginx --revision=4
+# k rollout history deploy nginx --revision=4
 
 # Scale the deployment to 5 replicas
 # k scale deploy/nginx --replicas=5
 # k describe deploy nginx
 
 # Autoscale the deployment, pods between 5 and 10, targeting CPU utilization at 80%
-# IMPORTANT 要學的
 # k autosacle deploy nginx --min=5 --max=10 --cpu-percent=80
 # k get hpa nginx
 
@@ -86,16 +64,13 @@ status: {}
 # Update the image to nginx:1.19.9 and check that there's nothing going on, since we paused the rollout
 # k set image deploy nginx nginx=nginx:1.19.9
 # k describe deploy nginx
-# k rollout history nginx 文件教的方法
+# 或者也可以 k rollout history deploy nginx
 
 # Resume the rollout and check that the nginx:1.19.9 image has been applied
 # k rollout resume deploy nginx
-# k rollout history nginx
+# k rollout history deploy nginx
 
 # Delete the deployment and the horizontal pod autoscaler you created
 # k delete hpa nginx
 # k delete deploy nginx
 # 或是 k delete deploy/nginx hpa/nginx
-
-# Implement canary deployment by running two instances of nginx marked as version=v1 and version=v2 so that the load is balanced at 75%-25% ratio
-

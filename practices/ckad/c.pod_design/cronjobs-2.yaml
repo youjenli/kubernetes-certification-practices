@@ -1,6 +1,7 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
-# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output. The cron job should be terminated if it takes more than 17 seconds to start execution after its scheduled time (i.e. the job missed its scheduled time).
-# k create cj busybox --image=busybox --restart=Never --dry-run=client -o yaml --schedule="*/1 * * * *" -- /bin/sh -c "date; echo Hello from the Kubernetes cluster" > job.yaml
+# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output.
+# The cron job should be terminated if it takes more than 17 seconds to start execution after its scheduled time (i.e. the job missed its scheduled time).
+# kubernetes-certification-practices % k create cj busybox --image busybox --schedule "*/1 * * * *" --dry-run=client -o yaml -- /bin/sh -c 'date; echo Hello from the Kubernetes cluster' > cronjob.yaml
 
 apiVersion: batch/v1
 kind: CronJob
@@ -8,12 +9,12 @@ metadata:
   creationTimestamp: null
   name: busybox
 spec:
-  startingDeadlineSeconds: 17 # 本題重點
   jobTemplate:
     metadata:
       creationTimestamp: null
       name: busybox
     spec:
+      activeDeadlineSeconds: 17 # 是在 job 而非 cronjob 的層級
       template:
         metadata:
           creationTimestamp: null
@@ -26,10 +27,11 @@ spec:
             image: busybox
             name: busybox
             resources: {}
-          restartPolicy: Never
-  schedule: '*/1 * * * *'
+          restartPolicy: OnFailure
+  schedule: "*/1 * * * *"
 status: {}
 
-# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output. The cron job should be terminated if it successfully starts but takes more than 12 seconds to complete execution.
-
-# Create a job from cronjob.
+# k describe cj busybox
+# k get job busybox-28956495
+# k describe job busybox-28956495
+# k logs busybox-28956495-q4ltf

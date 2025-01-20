@@ -1,21 +1,29 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
-
-# Taint a node with key tier and value frontend with the effect NoSchedule. Then, create a pod that tolerates this taint.
-# minikube node add # IMPORTANT
+# Taint a node with key tier and value frontend with the effect NoSchedule.
+# Then, create a pod that tolerates this taint.
 # k taint node minikube-m02 tier=frontend:NoSchedule
+# k run nginx --image nginx --dry-run=client -o yaml > pod.yaml
 
 apiVersion: v1
 kind: Pod
 metadata:
-  name: toleration
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
 spec:
   containers:
-  - name: nginx
-    image: nginx
-    ports:
-      - containerPort: 80
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
   tolerations:
   - key: "tier"
     operator: "Equal"
     value: "frontend"
     effect: "NoSchedule"
+status: {}
+
+# k apply -f ./practices/ckad/c.pod_design/pod_replacement-2.yaml
+# k describe po nginx

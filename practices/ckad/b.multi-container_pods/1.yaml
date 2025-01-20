@@ -1,5 +1,9 @@
-# k run busybox --image=busybox --restart=Never -o yaml --dry-run=client -- /bin/sh -c 'echo hello;sleep 3600' > 1.yaml
-# k exec busybox --container=busybox2 -it -- ls
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/b.multi_container_pods.md
+# Create a Pod with two containers, both with image busybox and command "echo hello; sleep 3600".
+# Connect to the second container and run 'ls'
+# k run busybox --image=busybox --restart=Never --dry-run=client -o yaml -- /bin/sh -c "echo sleep;sleep 3600" > pod.yaml
+# k apply -f ./practices/ckad/b.multi-container_pods/1.yaml
+# k exec busybox -c busybox2 -it -- /bin/sh # 進去後再 ls 
 # k exec busybox --c=busybox2 -it -- ls
 
 apiVersion: v1
@@ -11,19 +15,19 @@ metadata:
   name: busybox
 spec:
   containers:
-  - args:
+  - name: busybox1
+    args:
     - /bin/sh
     - -c
-    - echo hello;sleep 3600
+    - echo sleep;sleep 3600
     image: busybox
-    name: busybox
     resources: {}
-  - args:
+  - name: busybox2
+    args:
     - /bin/sh
     - -c
-    - echo hello;sleep 3600
+    - echo sleep;sleep 3600
     image: busybox
-    name: busybox2
     resources: {}
   dnsPolicy: ClusterFirst
   restartPolicy: Never

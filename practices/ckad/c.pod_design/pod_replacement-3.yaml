@@ -1,20 +1,53 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
 # Create a pod that will be placed on node controlplane. Use nodeSelector and tolerations.
-
-# k taint node minikube type=controlplane:NoSchedule
+# k describe node minikube-m02 # 取得節點名稱
+# k taint node minikube-m02 controlplane=true:NoSchedule
+# k run nginx --image nginx --dry-run=client -o yaml > pod.yaml
+# k apply -f ./practices/ckad/c.pod_design/pod_replacement-3.yaml
+# k describe po nginx
 
 apiVersion: v1
 kind: Pod
 metadata:
-  name: with-node-affinity
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
 spec:
   affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube-m02
   containers:
-  - name: with-node-affinity
-    image: registry.k8s.io/pause:3.8
-  nodeSelector: #IMPORTANT
-    kubernetes.io/hostname: minikube #IMPORTANT # 考題用的是 controlplane，但 minikube 是本地測試系統所給的名稱
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
   tolerations:
-    - key: "node-role.kubernetes.io/control-plane" #IMPORTANT
-      operator: "Exists" #IMPORTANT
-      effect: "NoSchedule"
+  - key: "controlplane"
+    operator: "Exists"
+    effect: "NoSchedule"
+status: {}
+
+# 或者也可以是
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: with-node-affinity
+# spec:
+#   containers:
+#   - name: with-node-affinity
+#     image: registry.k8s.io/pause:3.8
+#   nodeSelector: #IMPORTANT
+#     kubernetes.io/hostname: minikube #IMPORTANT
+#   # 考題用的是 controlplane，但 minikube 是本地測試系統所給的名稱
+#   tolerations:
+#     - key: "node-role.kubernetes.io/control-plane" #IMPORTANT
+#       operator: "Exists" #IMPORTANT
+#       effect: "NoSchedule"

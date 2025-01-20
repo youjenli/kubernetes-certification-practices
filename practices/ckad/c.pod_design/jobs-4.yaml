@@ -1,28 +1,23 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
 # Create the same job, but make it run 5 parallel times
-# k describe job pi
-# k describe job pi | Select-String parallel
-# k get job pi
 
 apiVersion: batch/v1
 kind: Job
 metadata:
   creationTimestamp: null
-  name: pi
+  name: busybox
 spec:
   completions: 5
-  parallelism: 5 # 此題的重點
+  parallelism: 5
   template:
     metadata:
       creationTimestamp: null
     spec:
       containers:
-      - command:
-        - perl
-        - "-Mbignum=bpi"
-        - "-wle 'print bpi(2000)'"
-        image: perl
-        name: pi
+      - image: busybox
+        name: busybox
         resources: {}
       restartPolicy: Never
 status: {}
+
+# k get job busybox

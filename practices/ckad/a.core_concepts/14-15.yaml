@@ -1,0 +1,6 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# If pod crashed and restarted, get logs about the previous instance
+# k logs po nginx -p/--previous
+
+# Execute a simple shell on the nginx pod
+# k exec nginx -it -- /bin/sh

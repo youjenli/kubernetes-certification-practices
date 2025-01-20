@@ -1,6 +1,6 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
-# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output. The cron job should be terminated if it successfully starts but takes more than 12 seconds to complete execution.
-# k create cj busybox --image=busybox --dry-run=client -o yaml -- /bin/sh -c "date; echo Hello from the Kubernetes cluster" > job.yaml
+# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output.
+# The cron job should be terminated if it successfully starts but takes more than 12 seconds to complete execution.
 
 apiVersion: batch/v1
 kind: CronJob
@@ -13,7 +13,7 @@ spec:
       creationTimestamp: null
       name: busybox
     spec:
-      activeDeadlineSeconds: 12 # 本題重點。此選項要參考自 Job 而非 cronjob
+      activeDeadlineSeconds: 12 # 是在 pod 而非 job 或 cronjob 的層級
       template:
         metadata:
           creationTimestamp: null
@@ -27,8 +27,8 @@ spec:
             name: busybox
             resources: {}
           restartPolicy: OnFailure
-  schedule: '*/1 * * * *'
+  schedule: "*/1 * * * *"
 status: {}
 
 # Create a job from cronjob.
-# k create job --from=cronjob/same-cron-job same-job # 特殊用法
+# k create job busybox --from=cronjob/busybox

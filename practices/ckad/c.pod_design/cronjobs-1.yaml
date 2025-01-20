@@ -1,18 +1,17 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/c.pod_design.md
-
-# Create a cron job with image busybox that runs on a schedule of "*/1 * * * *" and writes 'date; echo Hello from the Kubernetes cluster' to standard output
-# k create cronjob busybox --image=busybox --schedule="*/1 * * * *" -- /bin/sh -c "date; echo Hello from the kubernetes cluster"
+# Create a cron job with image busybox that runs on a schedule of "*/1 * * * *"
+# and writes 'date; echo Hello from the Kubernetes cluster' to standard output
+# k create cj busybox --image=busybox --schedule="*/1 * * * *"  -- echo "date; echo Hello from the Kubernetes cluster"
 
 # See its logs and delete it
-# k describe cronjob busybox
+# k describe cj busybox
 # k logs busybox-28950126-8drvz
 # k delete cj busybox
 
-# Create the same cron job again, and watch the status. Once it ran, check which job ran by the created cron job. Check the log, and delete the cron job
+# Create the same cron job again, and watch the status.
+# Once it ran, check which job ran by the created cron job.
+# Check the log, and delete the cron job
+# k describe cj busybox
 # k get jobs --watch
-
-# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output. The cron job should be terminated if it takes more than 17 seconds to start execution after its scheduled time (i.e. the job missed its scheduled time).
-
-# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output. The cron job should be terminated if it successfully starts but takes more than 12 seconds to complete execution.
-
-# Create a job from cronjob.
+# k get po --show-labels
+# k logs busybox-28956488-s7qr4

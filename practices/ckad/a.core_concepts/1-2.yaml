@@ -1,14 +1,25 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/a.core_concepts.md
+# Create a namespace called 'mynamespace' and a pod with image nginx called nginx on this namespace
+# k create ns mynamespace
+# k run nginx --image=nginx --namespace mynamespace --restart=Never --dry-run=client -o yaml > pod.yaml
+
 apiVersion: v1
 kind: Pod
 metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
   name: nginx
   namespace: mynamespace
 spec:
   containers:
-  - name: nginx
-    image: nginx:1.14.2
-    ports:
-    - containerPort: 80
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
 
-# 或是
-# kbl run nginx -n mynamespace -image=nginx --restart=Never
+# Create the pod that was just described using YAML
+# k apply -f practices/ckad/a.core_concepts/1-2.yaml
+# k describe po nginx -n mynamespace
