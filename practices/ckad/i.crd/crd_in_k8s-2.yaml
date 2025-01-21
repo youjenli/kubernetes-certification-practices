@@ -14,7 +14,8 @@ metadata:
   name: operator-sample
 spec:
   email: operator-sample@stable.example.com
-  name: "operator sample"
+  name: operator sample
   age: 30
 
 # Listing operator
+# k get operator

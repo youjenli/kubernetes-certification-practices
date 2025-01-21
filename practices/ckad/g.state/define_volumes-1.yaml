@@ -1,0 +1,42 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/g.state.md
+# Create busybox pod with two containers, each one will have the image busybox and will run the 'sleep 3600' command.
+# Make both containers mount an emptyDir at '/etc/foo'. Connect to the second busybox, write the first column of '/etc/passwd' file to '/etc/foo/passwd'.
+# Connect to the first busybox and write '/etc/foo/passwd' file to standard output. Delete pod.
+# k run busybox --image=busybox --restart=Never --dry-run=client -o yaml -- sleep 3600 > pod.yaml
+# k exec busybox -c busybox2 -it -- /bin/sh -c "head -n 1 /etc/passwd > /etc/foo/passwd"
+# k exec busybox -c busybox1 -it -- cat /etc/foo/passwd
+# k delete po busybox
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox
+  name: busybox
+spec:
+  containers:
+  - args:
+    - sleep
+    - "3600"
+    image: busybox
+    name: busybox1
+    resources: {}
+    volumeMounts:
+      - name: default
+        mountPath: /etc/foo
+  - args:
+    - sleep
+    - "3600"
+    image: busybox
+    name: busybox2
+    resources: {}
+    volumeMounts:
+      - name: default
+        mountPath: /etc/foo
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  volumes:
+    - name: default
+      emptyDir: {}
+status: {}

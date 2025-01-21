@@ -1,34 +1,6 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/g.state.md
-# Create a busybox pod with 'sleep 3600' as arguments. Copy '/etc/passwd' from the pod to your local folder
-# k run busybox3 --image=busybox --restart=Never -- /bin/sh -c "sleep 3600"
-# k cp busybox:etc/passwd g.state/passwd # IMPORTANT 要再練習的指令
-# 可以在 minikube 環境使用。後面目的地的路徑是以命令列工作目錄為錨點。
-# 在 windows 上以「/」分隔路徑而非「\」。
-
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: null
-  labels:
-    run: busybox3
-  name: busybox3
-spec:
-  containers:
-  - args:
-    - /bin/sh
-    - -c
-    - sleep 3600
-    image: busybox
-    name: busybox3
-    resources: {}
-    volumeMounts:
-      - name: mypvc
-        mountPath: /etc/foo
-  dnsPolicy: ClusterFirst
-  restartPolicy: Never
-  volumes:
-    - name: mypvc
-      persistentVolumeClaim:
-        claimName: mypvc
-     
-status: {}
+# Create a busybox pod with 'sleep 3600' as arguments.
+# Copy '/etc/passwd' from the pod to your local folder
+# k run busybox --image=busybox --restart=Never -- /bin/sh -c "sleep 3600"
+# k cp busybox:etc/passwd passwd
+# 可以在 minikube 環境使用。後面目的地的路徑是以命令列工作目錄為錨點。在 windows 上以「/」分隔路徑而非「\」。

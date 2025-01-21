@@ -1,16 +1,10 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/f.services.md
 # Create a pod with image nginx called nginx and expose its port 80
 # k run nginx --image=nginx --port=80 --restart=Never -o yaml --expose # --expose 是本題重要參數
-
-# Confirm that ClusterIP has been created. Also check endpoints
-# k get svc nginx
-# k get ep # 重要指令
-# 接著存 minikube 管理的服務：
 # docker context use default
 # minikube service nginx --url
 # https://minikube.sigs.k8s.io/docs/handbook/accessing/
-# 接著 minikube 會跑出類似下面的訊息：
-# $ docker context use default
-# default
+# minikube 會跑出類似下面的訊息：
 # Current context is now "default"
 # $ minikube service nginx --url
 # 😿  service default/nginx has no node port
@@ -19,54 +13,75 @@
 # ❗  Because you are using a Docker driver on windows, the terminal needs to be open to run it.
 # 只要再打 127.0.0.1:4924 即可呼叫服務
 
+# Confirm that ClusterIP has been created. Also check endpoints
+# k get svc nginx
+# k get ep # 重要指令
+
 # Get service's ClusterIP, create a temp busybox pod and 'hit' that IP with wget
 # k get svc nginx
-# k run busybox --image=busybox --restart=Never --rm -it -- /bin/sh
-# 進去後 wget 10.111.150.44:80
+# k run busybox --image busybox --restart=Never --rm -it -- wget -O- 10.244.1.3
 
 # Convert the ClusterIP to NodePort for the same service and find the NodePort port. Hit service using Node's IP.
 # Delete the service and the pod at the end.
 # k edit svc nginx
 # 把文件調整成下面的樣子，調整完存檔。
-# k get svc nginx
-# k get po nginx -o wide # 查其所在的節點名稱
-# 使用 minikube 時，可以透過 minikube service --url 查服務位置，然後再從本地打特定的埠號如 127.0.0.1:4988 
+# k get svc nginx # 確認 Service Type 已變成 node port
+# minikube service nginx --url
+# 從本地打服務
 
-apiVersion: v1
-kind: Service
-metadata:
-  creationTimestamp: "2025-01-16T16:41:51Z"
-  name: nginx
-  namespace: default
-  resourceVersion: "7717"
-  uid: cfdfc6b0-6dad-4299-b1ab-000eab0f1889
-spec:
-  clusterIP: 10.111.150.44
-  clusterIPs:
-  - 10.111.150.44
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
-  selector:
-    run: nginx
-  sessionAffinity: None
-  type: NodePort # 調整這行
-status:
-  loadBalancer: {}
-
-# Create a deployment called foo using image 'dgkanatsios/simpleapp' (a simple server that returns hostname) and 3 replicas. Label it as 'app=foo'.
+# Create a deployment called foo using image 'dgkanatsios/simpleapp' (a simple server that returns hostname) and 3 replicas.
+# Label it as 'app=foo'.
 # Declare that containers in this pod will accept traffic on port 8080 (do NOT create a service yet)
-# k create deploy foo --image=dgkanatsios/simpleapp --replicas=3 --dry-run=client -o yaml > deploy.yaml
+# k create deploy foo --image dgkanatsios/simpleapp --replicas=3 --port=8080 -o yaml
+# k label deploy foo app=foo
 
 # Get the pod IPs. Create a temp busybox pod and try hitting them on port 8080
+# k get po -l app=foo -o wide
+# k run busybox --image busybox --restart=Never -it --rm -- wget -O- 10.244.1.7:8080
 
-# Create a service that exposes the deployment on port 6262. Verify its existence, check the endpoints
+# Create a service that exposes the deployment on port 6262.
+# Verify its existence, check the endpoints
+# k expose deploy foo --port=6262 --target-port=8080
+# k get svc foo
+# k get ep foo
 
-# Create a temp busybox pod and connect via wget to foo service. Verify that each time there's a different hostname returned. Delete deployment and services to cleanup the cluster
+# Create a temp busybox pod and connect via wget to foo service.
+# Verify that each time there's a different hostname returned.
+# Delete deployment and services to cleanup the cluster
+# k run busybox --image busybox -it --rm --restart=Never -- wget -O- foo:6262
 
-# Create an nginx deployment of 2 replicas, expose it via a ClusterIP service on port 80. Create a NetworkPolicy so that only pods with labels 'access: granted' can access the pods in this deployment and apply it
+# Create an nginx deployment of 2 replicas, expose it via a ClusterIP service on port 80.
+# Create a NetworkPolicy so that only pods with labels 'access: granted' can access the pods in this deployment and apply it.
+# k create deploy nginx --image nginx --replicas=2 --port=80
+# k expose deploy nginx --port=80 --target-port=80
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: granted
+    ports:
+    - protocol: TCP
+      port: 80
+
+# k apply -f ./practices/ckad/f.services/services_and_networking.yaml
+# Access granted
+# k run busybox --image busybox --restart=Never -- sleep 3600
+# k label po busybox access=granted
+# k exec busybox -- wget -O- nginx:80
+
+# Access denied
+# k run busybox --image busybox --restart=Never -- sleep 3600
+# k exec busybox -- wget -O- nginx:80
+# Messages from the terminal:
+# Connecting to nginx:80 (10.98.166.78:80)

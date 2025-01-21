@@ -1,7 +1,10 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/g.state.md
-# Create a PersistentVolume of 10Gi, called 'myvolume'. Make it have accessMode of 'ReadWriteOnce' and 'ReadWriteMany',
-# storageClassName 'normal', mounted on hostPath '/etc/foo'. Save it on pv.yaml, add it to the cluster.
+# Create a PersistentVolume of 10Gi, called 'myvolume'.
+# Make it have accessMode of 'ReadWriteOnce' and 'ReadWriteMany',
+# storageClassName 'normal', mounted on hostPath '/etc/foo'.
+# Save it on pv.yaml, add it to the cluster.
 # Show the PersistentVolumes that exist on the cluster
+
 # IMPORTANT 要多練習的地方
 # https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeSpec
 
@@ -11,36 +14,37 @@
 # 這樣之後就不用再額外啟動某個命令列並呼叫 minikube mount
 # 使用者可以透過掛載上去的目錄提供檔案給叢集，但似乎沒辦法直接從裡面取得檔案
 
-# k get pv myvolume
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: myvolume
 spec:
+  storageClassName: normal
   capacity:
     storage: 10Gi
-  volumeMode: Filesystem
-  # A volume with volumeMode: Filesystem is mounted into Pods into a directory.
-  # If the volume is backed by a block device and the device is empty,
-  # Kubernetes creates a filesystem on the device before mounting it for the first time.
   accessModes:
     - ReadWriteOnce
-  storageClassName: normal
+    - ReadWriteMany
   hostPath:
-    path: /etc/foo
+    path: "/etc/foo"
+
+# k get pv myvolume
+# k describe pv myvolume
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: myvolume
+# spec:
+#   capacity:
+#     storage: 10Gi
+#   volumeMode: Filesystem
+#   # A volume with volumeMode: Filesystem is mounted into Pods into a directory.
+#   # If the volume is backed by a block device and the device is empty,
+#   # Kubernetes creates a filesystem on the device before mounting it for the first time.
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: normal
+#   hostPath:
+#     path: /etc/foo
     # type: Directory
-
-# Create a PersistentVolumeClaim for this PersistentVolume, called 'mypvc', a request of 4Gi and an accessMode of ReadWriteOnce,
-# with the storageClassName of normal, and save it on pvc.yaml. Create it on the cluster.
-# Show the PersistentVolumeClaims of the cluster. Show the PersistentVolumes of the cluster
-
-# Create a busybox pod with command 'sleep 3600', save it on pod.yaml.
-# Mount the PersistentVolumeClaim to '/etc/foo'.
-# Connect to the 'busybox' pod, and copy the '/etc/passwd' file to '/etc/foo/passwd'
-
-# Create a second pod which is identical with the one you just created (you can easily do it by changing the 'name' property on pod.yaml).
-# Connect to it and verify that '/etc/foo' contains the 'passwd' file. Delete pods to cleanup.
-# Note: If you can't see the file from the second pod, can you figure out why? What would you do to fix that?
-
-# Create a busybox pod with 'sleep 3600' as arguments. Copy '/etc/passwd' from the pod to your local folder
