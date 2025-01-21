@@ -1,0 +1,27 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a pod with resource requests cpu=0.5, memory=1Gi and limits cpu=1, memory=2Gi in namespace one
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox
+  name: busybox2
+spec:
+  containers:
+  - image: busybox
+    name: busybox
+    resources:
+      requests:
+        cpu: "0.5"
+        memory: 1Gi
+      limits:
+        cpu: "1"
+        memory: 2Gi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+# k apply -f ./practices/ckad/d.configuration/resource_quotas-2.yaml -n one
+# k get po busybox2 -n one

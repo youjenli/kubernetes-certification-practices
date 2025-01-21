@@ -1,0 +1,23 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create a namespace named limitrange with a LimitRange that limits pod memory to a max of 500Mi and min of 100Mi
+# k create ns limitrange
+
+# 建立 limitrange 資源。這個應該沒辦法用指令產生。
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: memory-constraint
+spec:
+  limits:
+  - max:
+      memory: 500Mi
+    min:
+      memory: 100Mi
+    type: Pod # 重要參數別忘記
+
+# k apply -f ./practices/ckad/d.configuration/limit_ranges.yaml -n limitrange
+
+# Describe the namespace limitrange
+# k describe ns limitrange # 這會取得各項限制
+
+# Create an nginx pod that requests 250Mi of memory in the limitrange namespace

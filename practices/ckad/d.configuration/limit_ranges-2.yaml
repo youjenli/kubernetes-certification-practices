@@ -1,0 +1,29 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create an nginx pod that requests 250Mi of memory in the limitrange namespace
+# k run po nginx --image nginx -n limitrange --dry-run=client -o yaml > pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: po
+  name: po
+  namespace: limitrange
+spec:
+  containers:
+  - args:
+    - nginx
+    image: nginx
+    name: po
+    resources:
+      requests:
+        memory: 250Mi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+# k apply -f ./practices/ckad/d.configuration/limit_ranges-2.yaml -n limitrange
+# 執行指令會拋出以下錯誤:
+# Error from server (Forbidden): error when creating "./practices/ckad/d.configuration/limit_ranges-2.yaml":
+# pods "po" is forbidden: maximum memory usage per Pod is 500Mi.  No limit is specified

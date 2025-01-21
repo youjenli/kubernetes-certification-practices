@@ -1,8 +1,8 @@
 # Create a busybox pod that runs i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done. Check its logs
-# k run busybox --image=busybox --restart=Never --dry-run=client -o yaml > po.yaml
-# 編輯 po.yaml
-# k apply -f .\e.observability\logging.yaml
-# k logs busybox
+# k run busybox --image=busybox --restart=Never --dry-run=client -o yaml -- /bin/sh -c 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done' > pod.yaml
+# 編輯 pod.yaml
+# k apply -f ./practices/ckad/e.observability/logging.yaml
+# k logs busybox # 可以再加上 -f 追蹤即時狀態
 
 apiVersion: v1
 kind: Pod
@@ -13,13 +13,13 @@ metadata:
   name: busybox
 spec:
   containers:
-  - image: busybox
+  - args:
+    - /bin/sh
+    - -c
+    - 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done'
+    image: busybox
     name: busybox
     resources: {}
-    args:
-      - /bin/sh
-      - "-c"
-      - 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done'
   dnsPolicy: ClusterFirst
   restartPolicy: Never
 status: {}

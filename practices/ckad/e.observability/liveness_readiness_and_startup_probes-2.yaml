@@ -1,0 +1,28 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/e.observability.md
+# Modify the pod.yaml file so that liveness probe starts kicking in after 5 seconds whereas the interval between probes would be 5 seconds.
+# Run it, check the probe, delete it.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    livenessProbe: 
+      exec:
+        command:
+          - ls
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+# k apply -f ./practices/ckad/e.observability/liveness_readiness_and_startup_probes-2.yaml
+# k describe po nginx | grep -i liveness

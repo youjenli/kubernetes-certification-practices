@@ -1,0 +1,37 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create ResourceQuota in namespace one with hard requests cpu=1, memory=1Gi and hard limits cpu=2, memory=2Gi.# 
+# k create ns one
+# k create quota myquota -n one --hard=requests.cpu=1,requests.memory=1Gi,limits.cpu=2,limits.memory=2Gi
+# k get quota myquota -n one -o yaml
+
+# Attempt to create a pod with resource requests cpu=2, memory=3Gi and limits cpu=3, memory=4Gi in namespace one
+# k run busybox --image busybox --restart=Never --dry-run=client -o yaml > pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox
+  name: busybox1
+spec:
+  containers:
+  - image: busybox
+    name: busybox
+    resources:
+      requests:
+        cpu: "2"
+        memory: 3Gi
+      limits:
+        cpu: "3"
+        memory: 4Gi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+# k apply -f ./practices/ckad/d.configuration/resource_quotas-1.yaml -n one
+# 這促使 kubernetes cluster 拋出以下錯誤:
+# Error from server (Forbidden): error when creating "./practices/ckad/d.configuration/resource_quotas.yaml":
+# pods "busybox" is forbidden: exceeded quota: myquota, requested: limits.cpu=3,limits.memory=4Gi,requests.cpu=2,requests.memory=3Gi, used: limits.cpu=0,limits.memory=0,requests.cpu=0,requests.memory=0, limited: limits.cpu=2,limits.memory=2Gi,requests.cpu=1,requests.memory=1Gi
+
+# Create a pod with resource requests cpu=0.5, memory=1Gi and limits cpu=1, memory=2Gi in namespace one

@@ -5,27 +5,16 @@
 
 # Create a configmap named config with values foo=lala,foo2=lolo
 # Display its values
-# k create configmap config --from-literal=foo=lala --from-literal=foo2=lolo -o yaml
-# k describe configmap config
+# k create cm config --from-literal=foo=lala --from-literal=foo2=lolo -o yaml
+# k describe cm config
 
 # Create and display a configmap from a file
 # Create the file with
-# echo -e "foo3=lili\nfoo4=lele" > config.txt
+# echo -e "foo3=lili\nfoo4=lele" > config.txt # for Unix-like
 # echo "foo3=lili`nfoo4=lele" > config.txt # for Windows
 # https://stackoverflow.com/questions/36737410/echo-newline-to-powershell-console
 # k create configmap config --from-file=config.txt -o yaml
 # k describe configmap config
-
-apiVersion: v1
-binaryData:
-  config.txt: //5mAG8AbwAzAD0AbABpAGwAaQAKAGYAbwBvADQAPQBsAGUAbABlAA0ACgA=
-kind: ConfigMap
-metadata:
-  creationTimestamp: "2025-01-16T13:07:41Z"
-  name: config
-  namespace: default
-  resourceVersion: "27453"
-  uid: 817a3c47-03d8-4d11-9ef3-2a29389ce55e
 
 # Create and display a configmap from a .env file
 # Create the file with the command
@@ -35,14 +24,36 @@ metadata:
 
 # Create and display a configmap from a file, giving the key 'special'
 # Create the file with
-# echo -e "var3=val3\nvar4=val4" > config4.txt
-# echo "var3=val3`nvar4=val4" > config.txt
+# echo -e "var3=val3\nvar4=val4" > config4.txt # For Unix-like
+# echo "var3=val3`nvar4=val4" > config.txt # For Windows
 # k create cm config --from-file=special=config.txt
 
-# Create a configMap called 'options' with the value var5=val5. Create a new nginx pod that loads the value from variable 'var5' in an env variable called 'option'
+# Create a configMap called 'options' with the value var5=val5.
+# Create a new nginx pod that loads the value from variable 'var5' in an env variable called 'option'
 # k create cm options --from-literal=var5=val5 -o yaml
-# k run options --image=nginx -o yaml --dry-run=client -o yaml > po.yaml
+# k run options --image=nginx --restart=Never -o yaml --dry-run=client -o yaml > po.yaml
+# k apply -f ./practices/ckad/d.configuration/configmaps-1.yaml
 
-# Create a configMap 'anotherone' with values 'var6=val6', 'var7=val7'. Load this configMap as env variables into a new nginx pod
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    env:
+      - name: var5
+        valueFrom:
+          configMapKeyRef:
+            name: options
+            key: var5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
 
-# Create a configMap 'cmvolume' with values 'var8=val8', 'var9=val9'. Load this as a volume inside an nginx pod on path '/etc/lala'. Create the pod and 'ls' into the '/etc/lala' directory.
+# k exec options -c=options -it -- env

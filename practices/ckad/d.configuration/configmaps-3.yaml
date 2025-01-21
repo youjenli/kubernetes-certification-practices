@@ -1,25 +1,34 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
-# Create a configMap 'anotherone' with values 'var6=val6', 'var7=val7'. Load this configMap as env variables into a new nginx pod
-# k create cm anotherone --from-literal=var6=val6 --from-literal=var7=val7 -o yaml
-# k run anotherone --image=nginx -o yaml --dry-run=client > po.yaml
-# 調整 yaml 成下面的樣子
-# k apply -f .\d.configuration\configmaps-3.yaml
+# Create a configMap 'cmvolume' with values 'var8=val8', 'var9=val9'.
+# Load this as a volume inside an nginx pod on path '/etc/lala'. Create the pod and 'ls' into the '/etc/lala' directory.
+# k create cm cmvolume --from-literal=var8=val8 --from-literal=var9=val9 -o yaml
+# k run cmvolume --image=nginx --restart=Never --dry-run=client -o yaml -- /bin/sh -c "ls /etc/lala" > po.yaml
+# 接著編譯文件內容
 
 apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
   labels:
-    run: anotherone
-  name: anotherone
+    run: cmvolume
+  name: cmvolume
 spec:
   containers:
-  - image: nginx
-    name: anotherone
+  - command: [ "/bin/sh", "-c", "ls /etc/lala" ]
+    # 要用 command 執行指令，否則啟動會失敗
+    image: nginx
+    name: cmvolume
     resources: {}
-    envFrom: # 重要語法
-      - configMapRef:
-          name: anotherone
+    volumeMounts:
+      - name: cmvolume
+        mountPath: /etc/lala
   dnsPolicy: ClusterFirst
-  restartPolicy: Always
+  restartPolicy: Never
+  # restartPolicy 一定要設成 Never 否則執行完成後會失敗
+  volumes:
+    - name: cmvolume
+      configMap:
+        name: cmvolume
 status: {}
+
+# k logs cmvolume

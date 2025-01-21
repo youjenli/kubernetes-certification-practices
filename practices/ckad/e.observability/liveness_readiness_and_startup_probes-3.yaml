@@ -1,9 +1,10 @@
 # https://github.com/dgkanatsios/CKAD-exercises/blob/main/e.observability.md
-# Create an nginx pod (that includes port 80) with an HTTP readinessProbe on path '/' on port 80. Again, run it, check the readinessProbe, delete it.
-# k run nginx --image=nginx --restart=Never --port=80 --dry-run=client -o yaml > po.yaml
-# k apply -f .\e.observability\liveness_readiness_startup_probes-3.yaml
-# k logs nginx
-# k describe po nginx | Select-String readiness
+# Create an nginx pod (that includes port 80) with an HTTP readinessProbe on path '/' on port 80.
+# Again, run it, check the readinessProbe, delete it.
+# k run nginx --image nginx --port=80 --restart=Never --dry-run=client -o yaml > pod.yaml
+# k apply -f ./practices/ckad/e.observability/liveness_readiness_and_startup_probes-3.yaml 
+# k describe po nginx | grep -i readiness # For Unix-like
+# k describe po nginx | Select-String readiness # For Windows
 # k delete -f .\e.observability\liveness_readiness_startup_probes-3.yaml
 
 apiVersion: v1
@@ -28,7 +29,8 @@ spec:
   restartPolicy: Never
 status: {}
 
-# Lots of pods are running in qa,alan,test,production namespaces. All of these pods are configured with liveness probe.
+# Lots of pods are running in qa,alan,test,production namespaces.
+# All of these pods are configured with liveness probe.
 # Please list all pods whose liveness probe are failed in the format of <namespace>/<pod name> per line.
 # kubectl get events -o json | jq -r '.items[] | select(.message | contains("Liveness probe failed")).involvedObject | .namespace + "/" + .name'
-# 極進階故僅供參考
+# 較進階故僅供參考

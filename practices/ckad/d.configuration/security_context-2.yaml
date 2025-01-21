@@ -1,0 +1,21 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create the YAML for an nginx pod that has the capabilities "NET_ADMIN", "SYS_TIME" added to its single container
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  securityContext:
+    capabilities:
+      add: ["NET_ADMIN", "SYS_TIME"]
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,28 @@
+# https://github.com/dgkanatsios/CKAD-exercises/blob/main/d.configuration.md
+# Create an nginx pod with requests cpu=100m,memory=256Mi and limits cpu=200m,memory=512Mi
+# k run nginx --image nginx --dry-run=client -o yaml > pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: 
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+# k apply -f ./practices/ckad/d.configuration/resource_requests_and_limits.yaml
+# k describe po nginx

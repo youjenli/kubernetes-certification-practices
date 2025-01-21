@@ -1,10 +1,17 @@
-# Create a busybox pod that runs 'ls /notexist'. Determine if there's an error (of course there is), see it. In the end, delete the pod
-# k run busybox --image=busybox --restart=Never -- /bin/sh -c "ls /notexist"
+# Create a busybox pod that runs 'ls /notexist'.
+# Determine if there's an error (of course there is), see it.
+# In the end, delete the pod
+# k run busybox --image busybox --restart=Never -- ls /notexist
+# k get po busybox
 # k logs busybox
 # k delete po busybox
 
-# Create a busybox pod that runs 'notexist'. Determine if there's an error (of course there is), see it. In the end, delete the pod forcefully with a 0 grace period
-# k run busybox --image=busybox --restart=Never -- /bin/sh -c "notexist"
+# Create a busybox pod that runs 'notexist'.
+# Determine if there's an error (of course there is), see it.
+# In the end, delete the pod forcefully with a 0 grace period
+# k run busybox --image=busybox --restart=Never -- notexist
+# k get po busybox # 可以再加上 -w 追蹤進展
+# k describe po busybox
 # k delete po busybox
 
 # Get CPU/memory utilization for nodes (metrics-server must be running)
